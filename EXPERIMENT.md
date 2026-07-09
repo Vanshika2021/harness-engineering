@@ -6,7 +6,7 @@
 1. Control experiment — same task built *with* vs *without* a harness.
 2. Blog post — which agent skills / methods performed best.
 
-> **Start here (pilot):** Run the full Arm A vs Arm B comparison on **Szechuan Royale alone** first — 3 trials per arm, 6 runs total. Validate that the process, logging, and rubric work, then scale to Shokudo and Sushi Kingdom. Szechuan Royale is the best first case because Bo flagged its Chinese name being mistranslated in an earlier build, so it stress-tests the tricky-content dimension where the harness should show its value.
+> **Start here (pilot):** Run the full comparison — Arm A vs B1 vs B2 — on **Szechuan Royale alone** first: **3 trials per arm × 3 arms = 9 runs total.** Validate that the process, logging, and rubric work, then scale to Shokudo and Sushi Kingdom. Szechuan Royale is the best first case because Bo flagged its Chinese name being mistranslated in an earlier build, so it stress-tests the tricky-content dimension where the harness should show its value.
 
 ---
 
@@ -26,7 +26,7 @@ Every run changes exactly **one** thing (the harness / method). Everything else 
 **Held fixed across all runs**
 - Source website (the "before") — same URL / same scraped content.
 - Task prompt — one verbatim prompt, defined once in §6 and never edited mid-study.
-- Base model — pin it (e.g. a specific Claude model in Claude Code). Record the exact version.
+- Base model — **pinned: `claude-opus-4-8` (1M context)** in Claude Code. Same model for every run; record it in the §9 Model column each time.
 - Definition of "done" — see §5.
 - Reference target for grading — Bo's example repo for that site.
 
@@ -121,18 +121,25 @@ Deliver a modern, responsive website that runs locally.
 
 ## 7. Candidate methods for RQ2
 
-Baseline is the control; each method below is one row in your results log. As you read Bo's sources, extract the specific technique each advocates and map it to a variant.
+This section has **two parts**: the approaches you actually run (each is one arm), and the techniques those approaches are built from. Keeping them separate is the thing that usually causes confusion.
 
-- **Baseline** — single-shot, no harness *(Arm A)*
-- **GSD Core** — off-the-shelf spec-driven harness framework; runs the task through a Discuss → Plan → Execute → Verify → Ship loop with disk-based `.planning/` artifacts and fresh-context subagents *(Arm B1)*
-- **DIY verification/build-test loop** — the enkira `harness-engineer` skill + your own checks *(Arm B2)*
-- **Spec / plan-file-driven** — write a plan to disk, work against it (planning-with-files style)
-- **Self-review / critique loop** — agent critiques its own output, or a second model reviews (codex-review style)
-- **Context-isolation / subagent** — delegate subtasks to keep the main context clean
+**Part 1 — Approaches you run** (each = one arm = rows in the log):
 
-Note: GSD Core already bundles the spec/plan-file, subagent, and verify-loop ideas into one framework — so the last three rows are really the *components* it combines. Testing GSD Core against your own DIY harness shows whether a full framework beats a simple hand-rolled one.
+- **A — Baseline:** single-shot, plain Claude Code, no harness. *You write nothing.*
+- **B1 — GSD Core:** the off-the-shelf framework. Runs a Discuss → Plan → Execute → Verify → Ship loop with disk-based `.planning/` artifacts and fresh-context subagents. *You install it; it brings its own rules — you write nothing.*
+- **B2 — DIY harness:** a harness you assemble yourself — the `harness-engineer` skill + your own checks (tests / lint / visual check via Claude in Chrome / quality gates). *This is the only arm where you author rules — once, up front, then reuse unchanged.*
 
-Reading list these map to (from Bo's onboarding email + call): Addy Osmani — loop-engineering; Mario Zechner — pi-coding-agent; OpenAI — harness-engineering; Anthropic — harness design for long-running apps; and GSD Core docs (docs.opengsd.net). Slot the concrete technique from each into the rows above as you go.
+**Part 2 — Techniques** (the building blocks — never run on their own):
+
+These are the *ingredients* a harness is made of. GSD Core (B1) already bundles all three automatically; your DIY harness (B2) is you picking and assembling some of them by hand.
+
+- **Spec / plan-file-driven** — write a plan to disk, work against it (planning-with-files style).
+- **Self-review / verify loop** — the agent checks its own output before "done" (or a second model reviews, codex-review style).
+- **Context-isolation / subagents** — hand subtasks to fresh-context helpers to keep the main context clean.
+
+**So the RQ2 headline comparison is:** B1 (a full pre-built framework) vs B2 (a simple hand-assembled harness) vs A (nothing) — with the Part 2 techniques as the shared parts list B1 and B2 are built from.
+
+*Reading list (where the techniques come from — from Bo's onboarding email + call):* Addy Osmani — loop-engineering; Mario Zechner — pi-coding-agent; OpenAI — harness-engineering; Anthropic — harness design for long-running apps; GSD Core docs (docs.opengsd.net). As you read each, jot the specific trick it recommends next to the matching technique above.
 
 ---
 
@@ -150,14 +157,24 @@ Reading list these map to (from Bo's onboarding email + call): Addy Osmani — l
 
 ## 9. Results log (fill in live)
 
+**9a. Coverage tracker** — at-a-glance grid of which runs are done. Each box is one trial; check it off (☐ → ☑) as you complete a run. The pilot is complete when the Szechuan Royale row is all ticked (9 boxes).
+
+| Site | Arm A (no harness) | Arm B1 (GSD Core) | Arm B2 (DIY harness) |
+|---|---|---|---|
+| Szechuan Royale | ☐ ☐ ☐ | ☐ ☐ ☐ | ☐ ☐ ☐ |
+| Shokudo | ☐ ☐ ☐ | ☐ ☐ ☐ | ☐ ☐ ☐ |
+| Sushi Kingdom | ☐ ☐ ☐ | ☐ ☐ ☐ | ☐ ☐ ☐ |
+
+**9b. Detailed log** — one row per run, filled in live during the build.
+
 | Run ID | Site | Arm / Method | Trial | Model | Wall time | Agent turns | Human interventions | Bugs self-caught | Bugs escaped | Design | Content | Correctness | Function | Test cov. | Notes |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| R001 | Szechuan | A (baseline) | 1 | | | | | | | | | | | | |
-| R002 | Szechuan | B1 (GSD Core) | 1 | | | | | | | | | | | | |
-| R003 | Szechuan | B2 (DIY harness) | 1 | | | | | | | | | | | | |
+| R001 | Szechuan | A (baseline) | 1 | opus-4-8 [1m] | | | | | | | | | | | |
+| R002 | Szechuan | B1 (GSD Core) | 1 | opus-4-8 [1m] | | | | | | | | | | | |
+| R003 | Szechuan | B2 (DIY harness) | 1 | opus-4-8 [1m] | | | | | | | | | | | |
 | … | | | | | | | | | | | | | | | |
 
-*(Consider mirroring this in a spreadsheet once it grows — easier to aggregate.)*
+*(Consider mirroring 9b in a spreadsheet once it grows — easier to aggregate.)*
 
 ---
 
