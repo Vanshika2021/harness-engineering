@@ -32,15 +32,16 @@ Every run changes exactly **one** thing (the harness / method). Everything else 
 
 **The independent variable (what we vary)**
 - **Arm A — No harness:** plain Claude Code, single prompt, no skill loaded, no verification loop, no plan file.
-- **Arm B — Harness:** harness-engineer skill loaded + a verification loop (tests / lint / visual check via Claude in Chrome / quality gates).
-- **Arm B-variants (RQ2):** swap in different methods one at a time (see §7).
+- **Arm B — Harness:** the agent works under a harness. Two harness methods are tested here (see §7):
+  - **B1 — GSD Core:** an off-the-shelf spec-driven harness framework (fresh-context subagents, persistent `.planning/` artifacts, a Verify step).
+  - **B2 — DIY harness:** a lightweight hand-rolled harness — `harness-engineer` skill + a verification loop (tests / lint / visual check via Claude in Chrome / quality gates).
 
 **Validity controls**
-- **Repeat runs:** LLM output is stochastic. Run each configuration >=3 trials per site. Report the spread, not just one number.
+- **Repeat runs:** LLM output is stochastic. Run each configuration **≥3 trials** per site. Report the spread, not just one number.
 - **Fresh context every run:** brand-new session, no memory bleed between runs.
 - **Order counterbalancing:** don't always run Arm A first — alternate, so fatigue/learning doesn't favor one arm.
 - **Blind grading where feasible:** strip arm labels from outputs before scoring so you don't score what you expect.
-- **Sites with reference repos = head-to-head; extras = replication.** Only three source sites have a matching Bo reference (Szechuan Royale, Shokudo, Sushi Kingdom). Use those three for the scored comparison. sk08865.com and the second Sushi Kingdom URL have no reference, so treat them as held-out replication / stretch.
+- **Sites with reference repos = head-to-head; extras = replication.** Only three source sites have a matching Bo reference (Szechuan Royale, Shokudo, Sushi Kingdom). Use those three for the scored comparison. `sk08865.com` and the second Sushi Kingdom URL have no reference, so treat them as held-out replication / stretch.
 
 ---
 
@@ -48,7 +49,7 @@ Every run changes exactly **one** thing (the harness / method). Everything else 
 
 | Site | Source ("before") | Bo reference repo | Role |
 |---|---|---|---|
-| Szechuan Royale | szechuanroyalechinese.com | enkira-ai/szechuan-royale-website | Scored — START HERE |
+| Szechuan Royale | szechuanroyalechinese.com | enkira-ai/szechuan-royale-website | Scored |
 | Shokudo | shokudo07840.com | enkira-ai/shokudo-website | Scored |
 | Sushi Kingdom | sushikingdomrestaurant.com | enkira-ai/sushi-kingdom-website | Scored |
 | SK08865 | sk08865.com | — | Replication |
@@ -60,17 +61,17 @@ Every run changes exactly **one** thing (the harness / method). Everything else 
 
 ## 4. Scoring rubric
 
-Four dimensions. The middle three are the metrics you chose ("all of the above"); the first captures whether the site is actually any good. Score 1-5 unless noted.
+Four dimensions. The middle three are the metrics you chose ("all of the above"); the first captures whether the site is actually any good. Score 1–5 unless noted.
 
 **A. Output quality**
-- Design quality vs Bo's reference (does it look modern / on par?) — 1-5
-- Content fidelity: menu items, prices, hours, address all correct — 1-5
-- Tricky-content correctness: restaurant-name translation right, no hallucinated info — 1-5 *(Bo flagged this as a common failure point)*
-- Functionality: runs locally, links work, responsive on mobile — 1-5
+- Design quality vs Bo's reference (does it look modern / on par?) — 1–5
+- Content fidelity: menu items, prices, hours, address all correct — 1–5
+- Tricky-content correctness: restaurant-name translation right, no hallucinated info — 1–5 *(Bo flagged this as a common failure point)*
+- Functionality: runs locally, links work, responsive on mobile — 1–5
 
 **B. Code quality & test coverage**
 - Tests present? coverage % if measurable
-- Code organization / readability — 1-5
+- Code organization / readability — 1–5
 - Builds & lints clean — pass / fail
 
 **C. Speed / iterations**
@@ -82,7 +83,7 @@ Four dimensions. The middle three are the metrics you chose ("all of the above")
 **D. Self-correction**
 - Bugs the agent caught and fixed on its own (count)
 - Bugs that escaped to the human (count)
-- Recovery quality: on failure, did it diagnose + fix, or spin / get stuck? — 1-5
+- Recovery quality: on failure, did it diagnose + fix, or spin / get stuck? — 1–5
 
 ---
 
@@ -110,7 +111,7 @@ Deliver a modern, responsive website that runs locally.
 
 **Per-run substitutions** (fill the two placeholders each time — everything else stays identical):
 
-| Site | Restaurant name | URL |
+| Site | `<RESTAURANT NAME>` | `<URL>` |
 |---|---|---|
 | Szechuan Royale | Szechuan Royale | szechuanroyalechinese.com |
 | Shokudo | Shokudo | shokudo07840.com |
@@ -122,19 +123,22 @@ Deliver a modern, responsive website that runs locally.
 
 Baseline is the control; each method below is one row in your results log. As you read Bo's sources, extract the specific technique each advocates and map it to a variant.
 
-- **Baseline** — single-shot, no harness *(this is Arm A)*
-- **Verification/build-test loop** — the enkira harness-engineer skill *(this is Arm B)*
+- **Baseline** — single-shot, no harness *(Arm A)*
+- **GSD Core** — off-the-shelf spec-driven harness framework; runs the task through a Discuss → Plan → Execute → Verify → Ship loop with disk-based `.planning/` artifacts and fresh-context subagents *(Arm B1)*
+- **DIY verification/build-test loop** — the enkira `harness-engineer` skill + your own checks *(Arm B2)*
 - **Spec / plan-file-driven** — write a plan to disk, work against it (planning-with-files style)
 - **Self-review / critique loop** — agent critiques its own output, or a second model reviews (codex-review style)
 - **Context-isolation / subagent** — delegate subtasks to keep the main context clean
 
-Reading list these map to (from Bo's onboarding email): Addy Osmani — loop-engineering; Mario Zechner — pi-coding-agent; OpenAI — harness-engineering; Anthropic — harness design for long-running apps. Slot the concrete technique from each into the rows above as you go.
+Note: GSD Core already bundles the spec/plan-file, subagent, and verify-loop ideas into one framework — so the last three rows are really the *components* it combines. Testing GSD Core against your own DIY harness shows whether a full framework beats a simple hand-rolled one.
+
+Reading list these map to (from Bo's onboarding email + call): Addy Osmani — loop-engineering; Mario Zechner — pi-coding-agent; OpenAI — harness-engineering; Anthropic — harness design for long-running apps; and GSD Core docs (docs.opengsd.net). Slot the concrete technique from each into the rows above as you go.
 
 ---
 
 ## 8. Procedure (per run)
 
-1. Fresh Claude Code session in the correct arm folder (arm-a-no-harness/ or arm-b-harness/).
+1. Fresh Claude Code session in the correct arm folder (`arm-a-no-harness/` or `arm-b-harness/`).
 2. Give the fixed prompt (§6) + the source site.
 3. Start a timer. Log **every** human intervention and **every** self-correction *as it happens* — you can't reconstruct these later.
 4. Let it run until "done" per §5.
@@ -149,14 +153,15 @@ Reading list these map to (from Bo's onboarding email): Addy Osmani — loop-eng
 | Run ID | Site | Arm / Method | Trial | Model | Wall time | Agent turns | Human interventions | Bugs self-caught | Bugs escaped | Design | Content | Correctness | Function | Test cov. | Notes |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | R001 | Szechuan | A (baseline) | 1 | | | | | | | | | | | | |
-| R002 | Szechuan | B (harness) | 1 | | | | | | | | | | | | |
-| ... | | | | | | | | | | | | | | | |
+| R002 | Szechuan | B1 (GSD Core) | 1 | | | | | | | | | | | | |
+| R003 | Szechuan | B2 (DIY harness) | 1 | | | | | | | | | | | | |
+| … | | | | | | | | | | | | | | | |
 
 *(Consider mirroring this in a spreadsheet once it grows — easier to aggregate.)*
 
 ---
 
-## 10. Analysis to blog
+## 10. Analysis → blog
 
 - Aggregate across trials; report **mean + spread** per arm/method (spread matters because of stochasticity).
 - The money question for RQ1: *where did no-harness fail that the harness caught?* Concrete failure examples > averages for the blog.
