@@ -34,14 +34,14 @@ Every run changes exactly **one** thing (the harness / method). Everything else 
 - **Arm A — No harness:** plain Claude Code, single prompt, no skill loaded, no verification loop, no plan file.
 - **Arm B — Harness:** the agent works under a harness. Two harness methods are tested here (see §7):
   - **B1 — GSD Core:** an off-the-shelf spec-driven harness framework (fresh-context subagents, persistent `.planning/` artifacts, a Verify step).
-  - **B2 — DIY harness:** a lightweight hand-rolled harness — `harness-engineer` skill + a verification loop (tests / lint / visual check via Claude in Chrome / quality gates).
+  - **B2 — DIY harness:** a lightweight hand-rolled harness — a single frozen `CLAUDE.md` (plan → preserve content → build → verify → self-correct) that Claude Code auto-loads from the run folder. No framework, no plugin — this is the honest "simple DIY" counterweight to B1.
 
 **Validity controls**
 - **Repeat runs:** LLM output is stochastic. Run each configuration **≥3 trials** per site. Report the spread, not just one number.
 - **Fresh context every run:** brand-new session, no memory bleed between runs.
 - **Order counterbalancing:** don't always run Arm A first — alternate, so fatigue/learning doesn't favor one arm.
 - **Blind grading where feasible:** strip arm labels from outputs before scoring so you don't score what you expect.
-- **No harness bleed across arms (critical for RQ1).** GSD Core must only affect B1 — otherwise Arm A isn't a true baseline and B2 isn't a pure DIY harness. It is therefore **installed per-project inside each `runs/szechuan-B1-*/.claude/` folder only, never globally.** A global install would wire GSD's hooks (context-window monitor + read-before-edit guard fire even outside a GSD project) into *every* Claude Code session, silently helping Arm A and double-harnessing B2 — which biases RQ1 toward "no difference." Verify before a run batch: `~/.claude/settings.json` has no `gsd` references, and the `runs/szechuan-A-*` / `runs/szechuan-B2-*` folders contain no `.claude/`. Launch each B1 run with its working directory set to that B1 folder so the project-scoped config loads.
+- **No harness bleed across arms (critical for RQ1).** GSD Core must affect **B1 only**. It is therefore installed **per-project inside each `runs/szechuan-B1-*/.claude/` folder, never globally.** A global install wires GSD's hooks (context-window monitor + read-before-edit guard) into *every* Claude Code session — silently helping Arm A and double-harnessing B2, which biases RQ1 toward "no difference." Likewise, no global `CLAUDE.md` and no auto-activating plugin may exist, or the baseline is contaminated. **Verify before every run batch:** `~/.claude/settings.json` has no `gsd` references and no harness hooks; `runs/szechuan-A-*` and `runs/szechuan-B2-*` contain no `.claude/`; and only the B2 folders contain a `CLAUDE.md`.
 - **Sites with reference repos = head-to-head; extras = replication.** Only three source sites have a matching Bo reference (Szechuan Royale, Shokudo, Sushi Kingdom). Use those three for the scored comparison. `sk08865.com` and the second Sushi Kingdom URL have no reference, so treat them as held-out replication / stretch.
 
 ---
@@ -128,7 +128,7 @@ This section has **two parts**: the approaches you actually run (each is one arm
 
 - **A — Baseline:** single-shot, plain Claude Code, no harness. *You write nothing.*
 - **B1 — GSD Core:** the off-the-shelf framework. Runs a Discuss → Plan → Execute → Verify → Ship loop with disk-based `.planning/` artifacts and fresh-context subagents. *You install it; it brings its own rules — you write nothing.*
-- **B2 — DIY harness:** a harness you assemble yourself — the `harness-engineer` skill + your own checks (tests / lint / visual check via Claude in Chrome / quality gates). *This is the only arm where you author rules — once, up front, then reuse unchanged.*
+- **B2 — DIY harness:** a harness you assemble yourself — a single frozen `CLAUDE.md` with your own rules (plan, preserve content, verify gates, self-correct). No plugin or framework. *This is the only arm where you author rules — once, up front, then reuse unchanged.*
 
 **Part 2 — Techniques** (the building blocks — never run on their own):
 
@@ -146,13 +146,22 @@ These are the *ingredients* a harness is made of. GSD Core (B1) already bundles 
 
 ## 8. Procedure (per run)
 
-1. Fresh Claude Code session in the correct arm folder (`arm-a-no-harness/` or `arm-b-harness/`).
-2. Give the fixed prompt (§6) + the source site.
+**Run folders** (pre-created, git-ignored): `runs/szechuan-<arm>-<trial>/`, e.g. `runs/szechuan-A-1`, `runs/szechuan-B1-2`, `runs/szechuan-B2-3`.
+
+**Launch step — arm-specific.** *Where* you launch Claude Code is load-bearing: launch in the wrong folder and B1 silently runs without GSD (treatment loses its harness) or A/B2 could inherit one. Always start the session from inside that run's own folder:
+
+- **Arm A** → `cd runs/szechuan-A-<n>` then launch `claude`. Folder is empty — no `CLAUDE.md`, no `.claude/`. Do not invoke any `/gsd-*` command.
+- **Arm B1** → `cd runs/szechuan-B1-<n>` then launch `claude` **from inside that folder** so the project-scoped GSD loads; run `/gsd-new-project`.
+- **Arm B2** → `cd runs/szechuan-B2-<n>` (already contains the frozen `CLAUDE.md`) then launch `claude`; it auto-loads the harness.
+
+**Then, every run:**
+1. Confirm the isolation checks in §2 pass (no global `gsd`/hooks/`CLAUDE.md`; only B2 folders have `CLAUDE.md`).
+2. Give the fixed prompt (§6) with this run's restaurant name + URL substituted.
 3. Start a timer. Log **every** human intervention and **every** self-correction *as it happens* — you can't reconstruct these later.
 4. Let it run until "done" per §5.
 5. Run the site locally; check against the rubric; screenshot the result.
-6. Open Bo's reference repo for that site; score dimension A against it.
-7. Fill one row in the results log (§9). Reset. Next run.
+6. Blind-score against Bo's reference repo (strip the arm label first). Use `SCORING-SHEET.md`.
+7. Fill one row in the results log (§9) and tick the coverage grid. Reset. Next run — vary the arm order (don't run all A's first).
 
 ---
 
