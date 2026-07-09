@@ -41,6 +41,7 @@ Every run changes exactly **one** thing (the harness / method). Everything else 
 - **Fresh context every run:** brand-new session, no memory bleed between runs.
 - **Order counterbalancing:** don't always run Arm A first — alternate, so fatigue/learning doesn't favor one arm.
 - **Blind grading where feasible:** strip arm labels from outputs before scoring so you don't score what you expect.
+- **No harness bleed across arms (critical for RQ1).** GSD Core must only affect B1 — otherwise Arm A isn't a true baseline and B2 isn't a pure DIY harness. It is therefore **installed per-project inside each `runs/szechuan-B1-*/.claude/` folder only, never globally.** A global install would wire GSD's hooks (context-window monitor + read-before-edit guard fire even outside a GSD project) into *every* Claude Code session, silently helping Arm A and double-harnessing B2 — which biases RQ1 toward "no difference." Verify before a run batch: `~/.claude/settings.json` has no `gsd` references, and the `runs/szechuan-A-*` / `runs/szechuan-B2-*` folders contain no `.claude/`. Launch each B1 run with its working directory set to that B1 folder so the project-scoped config loads.
 - **Sites with reference repos = head-to-head; extras = replication.** Only three source sites have a matching Bo reference (Szechuan Royale, Shokudo, Sushi Kingdom). Use those three for the scored comparison. `sk08865.com` and the second Sushi Kingdom URL have no reference, so treat them as held-out replication / stretch.
 
 ---
