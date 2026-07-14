@@ -6,7 +6,15 @@
 1. Control experiment — same task built *with* vs *without* a harness.
 2. Blog post — which agent skills / methods performed best.
 
-> **Start here (pilot):** Run the full comparison — Arm A vs B1 vs B2 — on **Szechuan Royale alone** first: **3 trials per arm × 3 arms = 9 runs total.** Validate that the process, logging, and rubric work, then scale to Shokudo and Sushi Kingdom. Szechuan Royale is the best first case because Bo flagged its Chinese name being mistranslated in an earlier build, so it stress-tests the tricky-content dimension where the harness should show its value.
+> **⚠️ PROVISIONAL — pending Bo call (noted 2026-07-14; may change after the call).**
+> Bo reviewed the plan and gave three steers. The §1–§9 details below are **not yet updated** to match — treat them as the pre-feedback plan until this is resolved on the call.
+> 1. **Don't start with the 3×3 matrix.** Do **two runs first** — one baseline (Arm A), one GSD (Arm B1). Expect lots of little problems; the goal of these two is to surface a *process-improvement list*, then regroup with Bo — not a clean apple-to-apple score yet.
+> 2. **Park B2.** The hand-rolled `CLAUDE.md` is "a list of reminders for Claude, not really a harness." Drop it from the immediate plan; real harness design is a later conversation informed by the two runs.
+> 3. **Reframe the thesis.** "Harness beats no-harness" is obvious and won't pass reviewers. Aim for *"a novel harness that performs ~10× better than GSD **and** baseline on website renovation."* → **GSD becomes a baseline to beat**, and the novel harness is the contribution.
+>
+> **Revised near-term plan:** A-1 ✅ done → run **B1-1 (GSD)** next in a fresh session → regroup with Bo on the process-problems list before scaling.
+
+> **Start here (pilot) [SUPERSEDED by the provisional note above — kept for reference]:** Run the full comparison — Arm A vs B1 vs B2 — on **Szechuan Royale alone** first: **3 trials per arm × 3 arms = 9 runs total.** Validate that the process, logging, and rubric work, then scale to Shokudo and Sushi Kingdom. Szechuan Royale is the best first case because Bo flagged its Chinese name being mistranslated in an earlier build, so it stress-tests the tricky-content dimension where the harness should show its value.
 
 ---
 
