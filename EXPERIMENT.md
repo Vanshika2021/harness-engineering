@@ -171,7 +171,7 @@ These are the *ingredients* a harness is made of. GSD Core (B1) already bundles 
 
 | Site | Arm A (no harness) | Arm B1 (GSD Core) | Arm B2 (DIY harness) |
 |---|---|---|---|
-| Szechuan Royale | ☐ ☐ ☐ | ☐ ☐ ☐ | ☐ ☐ ☐ |
+| Szechuan Royale | ☑ ☐ ☐ | ☐ ☐ ☐ | ☐ ☐ ☐ |
 | Shokudo | ☐ ☐ ☐ | ☐ ☐ ☐ | ☐ ☐ ☐ |
 | Sushi Kingdom | ☐ ☐ ☐ | ☐ ☐ ☐ | ☐ ☐ ☐ |
 
@@ -179,7 +179,7 @@ These are the *ingredients* a harness is made of. GSD Core (B1) already bundles 
 
 | Run ID | Site | Arm / Method | Trial | Model | Wall time | Agent turns | Human interventions | Bugs self-caught | Bugs escaped | Design | Content | Correctness | Function | Test cov. | Notes |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| R001 | Szechuan | A (baseline) | 1 | opus-4-8 [1m] | | | | | | | | | | | |
+| R001 | Szechuan | A (baseline) | 1 | opus-4-8 [1m] | 6m50s | ~13 (approx) | 0 (to done) | 1 | 5 | — | — | — | — | none | Built in one shot, no interventions to reach done. Self-caught: bad category-count label (then scripted a check of all 12). Escaped [me]: invented 龍 logo glyph (fabricated Chinese content — the flagged tricky-content failure), out-of-scope price sourcing, unverified external links, invented dish copy, unresolved hours conflict. Judged scores left blank for blind grading vs enkira-ai/szechuan-royale-website. Full write-up: FINDINGS-arm-A-szechuan.md |
 | R002 | Szechuan | B1 (GSD Core) | 1 | opus-4-8 [1m] | | | | | | | | | | | |
 | R003 | Szechuan | B2 (DIY harness) | 1 | opus-4-8 [1m] | | | | | | | | | | | |
 | … | | | | | | | | | | | | | | | |
