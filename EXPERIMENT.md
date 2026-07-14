@@ -1,20 +1,20 @@
 # Harness Engineering — Website Modernization Experiment Protocol
 
-**Owner:** Vanshika Agrawal · **Supervisor:** Bo Wen (Enkira / NovaServe)
+**Owner:** Vanshika Agrawal · **Supervisor:** external review
 **Task domain:** "Modernize this website" on real restaurant sites
 **Two deliverables this protocol feeds:**
 1. Control experiment — same task built *with* vs *without* a harness.
 2. Blog post — which agent skills / methods performed best.
 
-> **⚠️ PROVISIONAL — pending Bo call (noted 2026-07-14; may change after the call).**
-> Bo reviewed the plan and gave three steers. The §1–§9 details below are **not yet updated** to match — treat them as the pre-feedback plan until this is resolved on the call.
-> 1. **Don't start with the 3×3 matrix.** Do **two runs first** — one baseline (Arm A), one GSD (Arm B1). Expect lots of little problems; the goal of these two is to surface a *process-improvement list*, then regroup with Bo — not a clean apple-to-apple score yet.
+> **⚠️ PROVISIONAL — pending direction (noted 2026-07-14; may change after the call).**
+> Direction on the plan gave three steers. The §1–§9 details below are **not yet updated** to match — treat them as the pre-feedback plan until this is resolved on the call.
+> 1. **Don't start with the 3×3 matrix.** Do **two runs first** — one baseline (Arm A), one GSD (Arm B1). Expect lots of little problems; the goal of these two is to surface a *process-improvement list*, then regroup for direction — not a clean apple-to-apple score yet.
 > 2. **Park B2.** The hand-rolled `CLAUDE.md` is "a list of reminders for Claude, not really a harness." Drop it from the immediate plan; real harness design is a later conversation informed by the two runs.
 > 3. **Reframe the thesis.** "Harness beats no-harness" is obvious and won't pass reviewers. Aim for *"a novel harness that performs ~10× better than GSD **and** baseline on website renovation."* → **GSD becomes a baseline to beat**, and the novel harness is the contribution.
 >
-> **Revised near-term plan:** A-1 ✅ done → run **B1-1 (GSD)** next in a fresh session → regroup with Bo on the process-problems list before scaling.
+> **Revised near-term plan:** A-1 ✅ done → run **B1-1 (GSD)** next in a fresh session → regroup for direction on the process-problems list before scaling.
 
-> **Start here (pilot) [SUPERSEDED by the provisional note above — kept for reference]:** Run the full comparison — Arm A vs B1 vs B2 — on **Szechuan Royale alone** first: **3 trials per arm × 3 arms = 9 runs total.** Validate that the process, logging, and rubric work, then scale to Shokudo and Sushi Kingdom. Szechuan Royale is the best first case because Bo flagged its Chinese name being mistranslated in an earlier build, so it stress-tests the tricky-content dimension where the harness should show its value.
+> **Start here (pilot) [SUPERSEDED by the provisional note above — kept for reference]:** Run the full comparison — Arm A vs B1 vs B2 — on **Szechuan Royale alone** first: **3 trials per arm × 3 arms = 9 runs total.** Validate that the process, logging, and rubric work, then scale to Shokudo and Sushi Kingdom. Szechuan Royale is the best first case because earlier direction flagged its Chinese name being mistranslated in an earlier build, so it stress-tests the tricky-content dimension where the harness should show its value.
 
 ---
 
@@ -36,7 +36,7 @@ Every run changes exactly **one** thing (the harness / method). Everything else 
 - Task prompt — one verbatim prompt, defined once in §6 and never edited mid-study.
 - Base model — **pinned: `claude-opus-4-8` (1M context)** in Claude Code. Same model for every run; record it in the §9 Model column each time.
 - Definition of "done" — see §5.
-- Reference target for grading — Bo's example repo for that site.
+- Reference target for grading — the reference example repo for that site.
 
 **The independent variable (what we vary)**
 - **Arm A — No harness:** plain Claude Code, single prompt, no skill loaded, no verification loop, no plan file.
@@ -50,13 +50,13 @@ Every run changes exactly **one** thing (the harness / method). Everything else 
 - **Order counterbalancing:** don't always run Arm A first — alternate, so fatigue/learning doesn't favor one arm.
 - **Blind grading where feasible:** strip arm labels from outputs before scoring so you don't score what you expect.
 - **No harness bleed across arms (critical for RQ1).** GSD Core must affect **B1 only**. It is therefore installed **per-project inside each `runs/szechuan-B1-*/.claude/` folder, never globally.** A global install wires GSD's hooks (context-window monitor + read-before-edit guard) into *every* Claude Code session — silently helping Arm A and double-harnessing B2, which biases RQ1 toward "no difference." Likewise, no global `CLAUDE.md` and no auto-activating plugin may exist, or the baseline is contaminated. **Verify before every run batch:** `~/.claude/settings.json` has no `gsd` references and no harness hooks; `runs/szechuan-A-*` and `runs/szechuan-B2-*` contain no `.claude/`; and only the B2 folders contain a `CLAUDE.md`.
-- **Sites with reference repos = head-to-head; extras = replication.** Only three source sites have a matching Bo reference (Szechuan Royale, Shokudo, Sushi Kingdom). Use those three for the scored comparison. `sk08865.com` and the second Sushi Kingdom URL have no reference, so treat them as held-out replication / stretch.
+- **Sites with reference repos = head-to-head; extras = replication.** Only three source sites have a matching reference (Szechuan Royale, Shokudo, Sushi Kingdom). Use those three for the scored comparison. `sk08865.com` and the second Sushi Kingdom URL have no reference, so treat them as held-out replication / stretch.
 
 ---
 
 ## 3. Sites
 
-| Site | Source ("before") | Bo reference repo | Role |
+| Site | Source ("before") | Reference repo | Role |
 |---|---|---|---|
 | Szechuan Royale | szechuanroyalechinese.com | enkira-ai/szechuan-royale-website | Scored |
 | Shokudo | shokudo07840.com | enkira-ai/shokudo-website | Scored |
@@ -64,7 +64,7 @@ Every run changes exactly **one** thing (the harness / method). Everything else 
 | SK08865 | sk08865.com | — | Replication |
 | Sushi Kingdom (CT) | sushikingdomct.com | — | Replication |
 
-> Per Bo: ignore the Vercel deploy step — run the site on a local webserver and let the agent debug it visually via the Claude Chrome extension.
+> Per direction: ignore the Vercel deploy step — run the site on a local webserver and let the agent debug it visually via the Claude Chrome extension.
 
 ---
 
@@ -73,9 +73,9 @@ Every run changes exactly **one** thing (the harness / method). Everything else 
 Four dimensions. The middle three are the metrics you chose ("all of the above"); the first captures whether the site is actually any good. Score 1–5 unless noted.
 
 **A. Output quality**
-- Design quality vs Bo's reference (does it look modern / on par?) — 1–5
+- Design quality vs the reference (does it look modern / on par?) — 1–5
 - Content fidelity: menu items, prices, hours, address all correct — 1–5
-- Tricky-content correctness: restaurant-name translation right, no hallucinated info — 1–5 *(Bo flagged this as a common failure point)*
+- Tricky-content correctness: restaurant-name translation right, no hallucinated info — 1–5 *(flagged as a common failure point)*
 - Functionality: runs locally, links work, responsive on mobile — 1–5
 
 **B. Code quality & test coverage**
@@ -103,13 +103,13 @@ A run ends when **any** of these is true — record which:
 2. **Stalled** — no useful progress for **5 consecutive agent turns**.
 3. **Capped** — **45 minutes** of wall-clock time reached.
 
-These thresholds are now frozen for the whole study — don't change them mid-run. *(Confirm with Bo; adjust here only if he wants different numbers, before the first run.)*
+These thresholds are now frozen for the whole study — don't change them mid-run. *(Confirm via direction; adjust only if requested, before the first run.)*
 
 ---
 
 ## 6. The fixed prompt (define once, reuse verbatim)
 
-This wording is frozen for the whole study. The **only** things that change per run are the two placeholders (restaurant name + URL); the sentences around them never change, and neither does anything between arms except the harness/skill context. *(Send Bo this exact wording to confirm before your first run.)*
+This wording is frozen for the whole study. The **only** things that change per run are the two placeholders (restaurant name + URL); the sentences around them never change, and neither does anything between arms except the harness/skill context. *(Confirm this exact wording via direction before your first run.)*
 
 ```
 Modernize the website for <RESTAURANT NAME> (current site: <URL>).
@@ -148,7 +148,7 @@ These are the *ingredients* a harness is made of. GSD Core (B1) already bundles 
 
 **So the RQ2 headline comparison is:** B1 (a full pre-built framework) vs B2 (a simple hand-assembled harness) vs A (nothing) — with the Part 2 techniques as the shared parts list B1 and B2 are built from.
 
-*Reading list (where the techniques come from — from Bo's onboarding email + call):* Addy Osmani — loop-engineering; Mario Zechner — pi-coding-agent; OpenAI — harness-engineering; Anthropic — harness design for long-running apps; GSD Core docs (docs.opengsd.net). As you read each, jot the specific trick it recommends next to the matching technique above.
+*Reading list (where the techniques come from — from onboarding notes + call):* Addy Osmani — loop-engineering; Mario Zechner — pi-coding-agent; OpenAI — harness-engineering; Anthropic — harness design for long-running apps; GSD Core docs (docs.opengsd.net). As you read each, jot the specific trick it recommends next to the matching technique above.
 
 ---
 
@@ -168,7 +168,7 @@ These are the *ingredients* a harness is made of. GSD Core (B1) already bundles 
 3. Start a timer. Log **every** human intervention and **every** self-correction *as it happens* — you can't reconstruct these later.
 4. Let it run until "done" per §5.
 5. Run the site locally; check against the rubric; screenshot the result.
-6. Blind-score against Bo's reference repo (strip the arm label first). Use `SCORING-SHEET.md`.
+6. Blind-score against the reference repo (strip the arm label first). Use `SCORING-SHEET.md`.
 7. Fill one row in the results log (§9) and tick the coverage grid. Reset. Next run — vary the arm order (don't run all A's first).
 
 ---

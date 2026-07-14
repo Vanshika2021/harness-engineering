@@ -4,14 +4,14 @@ Copy this sheet once per run. Fill **Part 1** during the run, **Part 2** right a
 
 Two kinds of fields:
 - **Measured** = read it off, no judgment (times, counts, pass/fail). Can't be biased.
-- **Judged** = your 1–5 scores, compared against Bo's reference. Do these **blind** (see below).
+- **Judged** = your 1–5 scores, compared against the reference. Do these **blind** (see below).
 
 ---
 
 ## Blind-grading step (do this before Part 2)
 
 1. When the build finishes, save the site in a folder named by **Run ID only** (e.g. `R004/`) — no "harness" / "baseline" in the name.
-2. Score the website in front of you on its own merits vs Bo's reference, **without looking at which arm produced it.** (Easiest: score a few runs' outputs in shuffled order, arm labels hidden.)
+2. Score the website in front of you on its own merits vs the reference, **without looking at which arm produced it.** (Easiest: score a few runs' outputs in shuffled order, arm labels hidden.)
 3. Only *after* you've written the 1–5 scores, look up which arm it was and record it.
 
 Why: if you know it's the "harness" version, you'll unconsciously score it higher. Hiding the label keeps you judging the *website*, not the *method*. Only the judged 1–5 scores need this — measured numbers can't be biased.
@@ -33,7 +33,7 @@ Why: if you know it's the "harness" version, you'll unconsciously score it highe
 - Builds & lints clean:  pass  /  fail
 - Test coverage:  ____%  (or "none")
 
-## Part 2 — judged, 1–5, vs Bo's reference (do blind)
+## Part 2 — judged, 1–5, vs the reference (do blind)
 
 **Output quality**
 - Design quality (modern / on par with reference): __/5

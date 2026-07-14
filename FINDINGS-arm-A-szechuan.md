@@ -42,7 +42,7 @@
 - **`[me]` — Invented Chinese content (headline finding).** The agent placed **`龍` (dragon)**
   as a decorative logo glyph in 4 places across the two pages. This is **not the restaurant's
   real name or logo** — it is fabricated Chinese content, the *exact* "tricky-content /
-  name-mistranslation" failure Bo flagged as the reason to pilot on Szechuan Royale. Critically,
+  name-mistranslation" failure flagged as the reason to pilot on Szechuan Royale. Critically,
   **the agent never flagged it** — with no harness it would have shipped invisibly. A
   preserve-content / no-invented-info gate is precisely what should catch this.
 - **`[me]` — Content pulled from beyond the given URL, silently.** The prompt says keep the

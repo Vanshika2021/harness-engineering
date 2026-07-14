@@ -1,6 +1,6 @@
 # Friction log — exploratory runs
 
-Purpose: these first runs are **not scored** (per Bo). The goal is to surface the list of things to improve before scaling up. Jot anything that breaks, anything you had to step in for, and anything about the *process* that was clunky. Rough notes are fine — messy observations are the whole point.
+Purpose: these first runs are **not scored** (per direction). The goal is to surface the list of things to improve before scaling up. Jot anything that breaks, anything you had to step in for, and anything about the *process* that was clunky. Rough notes are fine — messy observations are the whole point.
 
 How to fill this: type notes as you watch the run, and/or ask the run's own agent to append its problems/fixes here, and/or paste observations into the chat and have them collected here. (An agent's self-report misses errors it didn't notice — so trust your own eyes for correctness bugs.)
 
@@ -80,7 +80,7 @@ The `[me]`-only items are the important ones: they're what a reminder-style setu
 
 ---
 
-## Cross-run takeaways (fill after both) → bring to Bo
+## Cross-run takeaways (fill after both) → raise at next direction sync
 
 - Biggest recurring failure modes (candidates for real harness gates):
 -
@@ -88,5 +88,5 @@ The `[me]`-only items are the important ones: they're what a reminder-style setu
 -
 - Process fixes needed before a clean scored comparison:
 -
-- Open questions for Bo:
+- Open questions to raise:
 -
