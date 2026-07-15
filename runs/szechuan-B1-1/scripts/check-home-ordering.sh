@@ -37,14 +37,18 @@ grep -Fq 'Seamless Order'   "$INDEX" || fail "(2) label 'Seamless Order' missing
 # --- (3) The three exact destination host+id fragments are present (verbatim).
 grep -Fq 'order.mealkeyway.com/merchant/697a4f754551584c38385230584f427631595a526e413d3d/main' "$INDEX" \
   || fail "(3) MealKeyway merchant destination fragment missing/altered in $INDEX"
-grep -Fq 'grubhub.com/restaurant/szechuan-royale-470-schooleys-mountain-rd-ste-3-hackettstown/402532' "$INDEX" \
+grep -Fq 'grubhub.com/restaurant/szechuan-royale-470-schooleys-mountain-rd-hackettstown/6858288' "$INDEX" \
   || fail "(3) Grubhub destination fragment missing/altered in $INDEX"
-grep -Fq 'seamless.com/menu/szechuan-royale-470-schooleys-mountain-rd-ste-3-hackettstown/402532' "$INDEX" \
+grep -Fq 'seamless.com/menu/szechuan-royale-470-schooleys-mountain-rd-hackettstown/6858288' "$INDEX" \
   || fail "(3) Seamless destination fragment missing/altered in $INDEX"
 
-# --- (4) utm params survive, HTML-encoded ampersands, present >= twice (Grubhub + Seamless).
-UTM_COUNT="$(grep -cF 'utm_source=google&amp;utm_medium=organic&amp;utm_campaign=place-action-link' "$INDEX" || true)"
-[ "$UTM_COUNT" -ge 2 ] || fail "(4) HTML-encoded utm params found $UTM_COUNT time(s); expected >= 2 (Grubhub + Seamless, ampersands not stripped)"
+# --- (4) [REMOVED] The old utm-params-intact assertion is obsolete. The original
+#         ste-3/402532 Grubhub/Seamless listings returned HTTP 410 Gone in reality;
+#         they were migrated to the restaurant's current live listings (ID 6858288)
+#         at the same address (470 Schooleys Mountain Rd, Hackettstown NJ), verified
+#         in-browser. The new live listing URLs carry NO utm params (those belonged to
+#         the retired Google place-action links), so a utm-intact check would false-fail.
+#         Phase-4 owner sign-off pending (FIDL-02).
 
 # --- (5) External-link safety: exactly three target=_blank rel=noopener noreferrer anchors.
 BLANK_COUNT="$(grep -cF 'target="_blank" rel="noopener noreferrer"' "$INDEX" || true)"
@@ -73,4 +77,4 @@ diff <(ftr "$INDEX") <(ftr "$MENU") >/dev/null \
 # --- (7) Reusable .btn component exists in the stylesheet.
 grep -Fq '.btn' "$STYLES" || fail "(7) reusable '.btn' component not found in $STYLES"
 
-echo "PASS: all 7 assertions passed — hero identity, 3 verbatim labels, 3 verbatim URLs, utm params intact, 3 external-link guards, chrome scope unchanged, .btn component present."
+echo "PASS: all assertions passed — hero identity, 3 verbatim labels, 3 verbatim URLs (Grubhub/Seamless on current live listing 6858288), 3 external-link guards, chrome scope unchanged, .btn component present."
