@@ -1,6 +1,6 @@
 # Friction log — exploratory runs (Szechuan Royale)
 
-**Status:** Exploratory, per Bo — not scored. Goal: surface failure modes and process friction, and spec a harness that beats GSD/baseline. Model pinned: `claude-opus-4-8` (1M) throughout. Runs executed in a separate terminal from this bookkeeping session.
+**Status:** Exploratory, per mentor — not scored. Goal: surface failure modes and process friction, and spec a harness that beats GSD/baseline. Model pinned: `claude-opus-4-8` (1M) throughout. Runs executed in a separate terminal from this bookkeeping session.
 
 Provenance: `[A]` = agent reported · `[me]` = human caught (agent did not flag) · `[both]`.
 
@@ -12,7 +12,7 @@ Provenance: `[A]` = agent reported · `[me]` = human caught (agent did not flag)
 Same prompt, same model. Baseline Run 1 declared it reproduced "115 items across 12 categories, all prices verbatim, nothing invented." GSD, verifying against the live site, proved **the priced menu does not exist on the source** — no Menu page, no prices; the real menu lives only on ordering platforms. It stated plainly: "I won't fabricate one." Run 1's claim was fabrication presented as fidelity. `[me]` — caught by cross-run comparison.
 
 **2. The baseline is a distribution, not a behavior.**
-Two baseline runs, identical inputs, opposite conduct: Run 1 guessed and built immediately; Run 2 fetched, hit a 403 on the ordering site, recognized it "can't safely default," and stopped to ask. Confirms Bo's warning: a single A-vs-B comparison is noise. Also localizes the unreliability — ambiguous content sourcing. `[me]`
+Two baseline runs, identical inputs, opposite conduct: Run 1 guessed and built immediately; Run 2 fetched, hit a 403 on the ordering site, recognized it "can't safely default," and stopped to ask. Confirms mentor's warning: a single A-vs-B comparison is noise. Also localizes the unreliability — ambiguous content sourcing. `[me]`
 
 **3. Two of three "verified" ordering links were dead (HTTP 410) — every automated gate passed them.** `[me]`
 GSD fetched the ordering URLs from the live source, asserted them character-for-character with `grep -F`, passed 7/7 assertions, passed plan-check, passed phase verification. Human clicked the buttons: Grubhub and Seamless both returned **410 Gone**. The source site's own listings are retired. **Perfect fidelity to a broken source.** GSD then searched, found the live listing (ID 6858288, address-matched to 470 Schooleys Mountain Rd), rejected a wrong-address candidate (24 Hastings Dr), and swapped them in — recorded as a user-authorized fidelity exception, flagged for Phase 4 owner sign-off.
@@ -22,7 +22,7 @@ Asked to confirm the replacement listings, GSD reported: Grubhub/Seamless are Ja
 **Consequence for the harness spec: an HTTP-status check is insufficient. Liveness verification must be browser-based (render + read).**
 
 **5. Chinese name — opposite failure modes, neither correct.** `[me]`
-The restaurant's Chinese name **鸿园** appears only inside the storefront hero image (pixels, not text). Baseline mistranslated/invented it. GSD never perceived it: it extracts text only, so 鸿园 appears nowhere in PROJECT.md, REQUIREMENTS.md, or the built site — and, critically, **it is not a requirement, so no verifier checks for it.** Requirements derived from text-only extraction inherit the text-only blind spot. **Baseline hallucinates; GSD omits.** Neither is correct. Bo flagged this as the known failure point.
+The restaurant's Chinese name **鸿园** appears only inside the storefront hero image (pixels, not text). Baseline mistranslated/invented it. GSD never perceived it: it extracts text only, so 鸿园 appears nowhere in PROJECT.md, REQUIREMENTS.md, or the built site — and, critically, **it is not a requirement, so no verifier checks for it.** Requirements derived from text-only extraction inherit the text-only blind spot. **Baseline hallucinates; GSD omits.** Neither is correct. mentor flagged this as the known failure point.
 
 ---
 
@@ -96,11 +96,11 @@ Each item is a gate neither system has, derived from an observed failure:
 4. **Correspondence-to-reality, not just to-source.** GSD verifies the build matches what it fetched; nothing verifies the fetched data is still true. *Evidence: faithful reproduction of retired listings.*
 5. **Stop-on-ambiguity gate.** Halt and ask when a required fact can't be sourced. *Evidence: baseline A1 fabricated; A2 did it by luck; GSD does it by design — make it structural.*
 
-**Thesis for Bo:** baseline invents what it can't verify. GSD verifies what it fetches — genuinely, executably — but its verification is capped at the HTTP layer and blind to images, so it faithfully ships stale truth and silently omits what it cannot see. **A task-specific harness with browser-rendered and vision-based gates catches what both miss, cheaply.** That's the 10x argument: not a bigger framework, but the few gates a general-purpose one structurally cannot have.
+**Thesis for mentor:** baseline invents what it can't verify. GSD verifies what it fetches — genuinely, executably — but its verification is capped at the HTTP layer and blind to images, so it faithfully ships stale truth and silently omits what it cannot see. **A task-specific harness with browser-rendered and vision-based gates catches what both miss, cheaply.** That's the 10x argument: not a bigger framework, but the few gates a general-purpose one structurally cannot have.
 
 ---
 
-## Open questions for Bo
+## Open questions for mentor
 
 1. **Authoritative menu source?** No arm can reproduce a priced menu that isn't published as text. Is there a real menu (PDF/export) you can supply? Blocks both arms equally.
 2. **Address:** "Unit 3" / "ste-3" appears in third-party listings; the official site says 470 Schooleys Mountain Rd. Which is canonical?
