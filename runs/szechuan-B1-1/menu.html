@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Szechuan Royale — Menu</title>
+  <meta name="description" content="Szechuan Royale menu page (shell in progress).">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- ===== SHARED CHROME: HEADER/NAV (edit-all-three: keep byte-identical
+       across index.html, menu.html, contact.html except the active link) ===== -->
+  <header class="site-header">
+    <div class="container site-header__inner">
+      <a class="wordmark" href="index.html">Szechuan <span class="wordmark__accent">Royale</span></a>
+      <button
+        type="button"
+        id="nav-toggle"
+        class="nav-toggle"
+        aria-controls="nav-menu"
+        aria-expanded="false"
+        aria-label="Open navigation menu">
+        <span class="nav-toggle__bars" aria-hidden="true"></span>
+      </button>
+      <nav aria-label="Primary">
+        <ul id="nav-menu" class="nav-menu">
+          <li><a class="nav-menu__link" href="index.html">Home</a></li>
+          <li><a class="nav-menu__link is-active" href="menu.html" aria-current="page">Menu</a></li>
+          <li><a class="nav-menu__link" href="contact.html">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+  <!-- ===== END SHARED CHROME: HEADER/NAV ===== -->
+
+  <main class="site-main">
+    <div class="container">
+      <div class="page-intro">
+        <h1>Menu</h1>
+        <p>Our menu will appear here soon.</p>
+      </div>
+      <section class="placeholder" aria-label="Menu content placeholder">
+        <span class="placeholder__label">Placeholder</span>
+        <h2>Menu — coming soon</h2>
+        <p>This is a shell page. Real content will be added in a later phase.</p>
+      </section>
+    </div>
+  </main>
+
+  <!-- ===== SHARED CHROME: FOOTER (edit-all-three: keep byte-identical
+       across index.html, menu.html, contact.html) ===== -->
+  <footer class="site-footer">
+    <div class="container site-footer__inner">
+      <div class="site-footer__wordmark">Szechuan Royale</div>
+      <ul class="site-footer__slots">
+        <li class="site-footer__slot">Address — coming soon</li>
+        <li class="site-footer__slot">Phone — coming soon</li>
+        <li class="site-footer__slot">Hours — coming soon</li>
+      </ul>
+      <p class="site-footer__copyright">&copy; Szechuan Royale. All rights reserved.</p>
+    </div>
+  </footer>
+  <!-- ===== END SHARED CHROME: FOOTER ===== -->
+
+  <script src="nav.js"></script>
+</body>
+</html>
