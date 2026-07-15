@@ -373,6 +373,23 @@ img {
   .js-nav .nav-menu.is-open {
     display: flex;
   }
+
+  /* Ordering CTA stacks full-width on narrow viewports so the primary CTA
+     stays reachable and above the fold at ~375px (D-05, Pitfall 4). */
+  .cta-group {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .btn {
+    text-align: center;
+  }
+
+  /* Keep the hero compact on mobile so the primary CTA does not fall below
+     the fold (constrain padding via spacing tokens). */
+  .hero {
+    padding-block: var(--space-6);
+  }
 }
 
 /* Desktop: ensure the toggle never shows and links stay inline. */
@@ -384,4 +401,104 @@ img {
   .nav-menu {
     display: flex;
   }
+}
+
+/* --------------------------------------------------------------------------
+   Phase 2 — Home hero + reusable ordering CTA button component (D-01/D-04/D-06)
+   CSS-only (no imagery, no JS). Built entirely from the :root design tokens
+   above — no new hex/px literals (utility clip-rect mechanics excepted).
+   -------------------------------------------------------------------------- */
+
+/* CSS-only hero: warm-neutral surface with a deep-red accent band. Body/hero
+   text stays dark on the cream surface for AA; the red is an accent, not a
+   large fill behind text (D-03). */
+.hero {
+  padding-block: var(--space-8);
+  margin-bottom: var(--space-6);
+  background-color: var(--color-surface);
+  border-top: 4px solid var(--color-accent);
+}
+
+.hero__title {
+  font-size: var(--text-3xl);
+  font-family: var(--font-display);
+  margin-bottom: var(--space-3);
+}
+
+/* Accent word mirrors the header wordmark treatment (.wordmark__accent). */
+.hero__title .accent {
+  color: var(--color-accent);
+}
+
+.hero__tagline {
+  color: var(--color-muted);
+  font-size: var(--text-lg);
+  margin-bottom: 0;
+}
+
+/* Reusable button component (D-06) — consumed by the three ordering anchors
+   and reused by Phase 3 (MENU-02). Token-only values. */
+.btn {
+  display: inline-block;
+  padding: var(--space-3) var(--space-5);
+  border: 2px solid transparent;
+  border-radius: var(--radius);
+  font-family: var(--font-display);
+  font-size: var(--text-base);
+  font-weight: 700;
+  line-height: var(--leading-tight);
+  text-decoration: none;
+}
+
+/* Primary: filled deep-red with light text — the one verified light-on-red
+   pair (~6.6:1 AA PASS). */
+.btn--primary {
+  background-color: var(--color-accent);
+  color: var(--color-on-accent);
+}
+
+.btn--primary:hover,
+.btn--primary:focus {
+  background-color: var(--color-accent-strong);
+  color: var(--color-on-accent);
+  text-decoration: none;
+}
+
+/* Secondary: accent text + accent border on the LIGHT surface — never light
+   text on a pale tint (Pitfall 1). Accent-on-cream ~6.6:1 AA PASS. */
+.btn--secondary {
+  background-color: var(--color-surface);
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+}
+
+.btn--secondary:hover,
+.btn--secondary:focus {
+  color: var(--color-accent-strong);
+  border-color: var(--color-accent-strong);
+  text-decoration: none;
+}
+
+/* CTA row: primary first, wraps on narrow viewports (stacks in the 720px
+   block above). */
+.cta-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-4);
+  margin-top: var(--space-6);
+}
+
+/* Visually-hidden utility (WCAG G201 "(opens in a new tab)" hint). Standard
+   1px clip-rect / sr-only pattern — utility mechanics, not design tokens. */
+.u-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  border: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
