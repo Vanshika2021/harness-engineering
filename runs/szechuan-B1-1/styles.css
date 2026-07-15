@@ -1,0 +1,329 @@
+/* ==========================================================================
+   Szechuan Royale — shared stylesheet (Phase 1 shell)
+   Single design-system source: color / type / spacing tokens as CSS custom
+   properties (D-04). System font stack only — no network webfont (D-03).
+   Every later phase inherits these tokens; no hard-coded one-off values.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Design tokens (:root) — color, type scale, spacing
+   Palette: deep Szechuan red accent over warm neutrals (D-02). Red reserved
+   for emphasis (links, accents, future CTA), not large fills.
+   Contrast (WCAG AA, normal text needs >= 4.5:1):
+     --color-text  #1f1b18 on --color-surface #fbf7f0  -> ~15.4:1  PASS
+     --color-text  #1f1b18 on --color-surface-2 #f3ece0 -> ~13.9:1  PASS
+     --color-accent #a51c1c on --color-surface #fbf7f0  -> ~6.6:1   PASS
+     --color-surface #fbf7f0 on --color-accent #a51c1c  -> ~6.6:1   PASS (accent bg + light text)
+     --color-muted #5a524b on --color-surface #fbf7f0   -> ~7.4:1   PASS
+   -------------------------------------------------------------------------- */
+:root {
+  /* Color group */
+  --color-accent: #a51c1c;          /* deep Szechuan red — emphasis only */
+  --color-accent-strong: #7d1414;   /* darker red for hover/active */
+  --color-surface: #fbf7f0;         /* warm off-white / cream page surface */
+  --color-surface-2: #f3ece0;       /* slightly deeper warm neutral (footer, panels) */
+  --color-text: #1f1b18;            /* near-black charcoal text */
+  --color-muted: #5a524b;           /* muted warm gray for secondary text */
+  --color-border: #e0d6c6;          /* subtle warm border/neutral */
+  --color-on-accent: #fbf7f0;       /* light text placed on the red accent */
+
+  /* Type scale group — system stack only (D-03), modular ~1.2 steps */
+  --font-body: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
+    Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  --font-display: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto,
+    Helvetica, Arial, sans-serif;
+
+  --text-sm: 0.875rem;   /* 14px */
+  --text-base: 1rem;     /* 16px */
+  --text-lg: 1.25rem;    /* 20px */
+  --text-xl: 1.5rem;     /* 24px */
+  --text-2xl: 2rem;      /* 32px */
+  --text-3xl: 2.75rem;   /* 44px */
+  --leading-tight: 1.15;
+  --leading-normal: 1.6;
+
+  /* Spacing scale group (rem, ~4px base grid) */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-8: 3rem;
+
+  /* Layout / misc tokens */
+  --radius: 8px;
+  --max-content: 68rem;
+  --header-height: 4rem;
+  --shadow-header: 0 1px 0 var(--color-border), 0 2px 8px rgba(31, 27, 24, 0.06);
+}
+
+/* --------------------------------------------------------------------------
+   Base / reset
+   -------------------------------------------------------------------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-body);
+  font-size: var(--text-base);
+  line-height: var(--leading-normal);
+  color: var(--color-text);
+  background-color: var(--color-surface);
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  line-height: var(--leading-tight);
+  color: var(--color-text);
+  margin: 0 0 var(--space-4);
+}
+
+h1 {
+  font-size: var(--text-3xl);
+}
+
+h2 {
+  font-size: var(--text-2xl);
+}
+
+p {
+  margin: 0 0 var(--space-4);
+}
+
+a {
+  color: var(--color-accent);
+  text-decoration: none;
+}
+
+a:hover,
+a:focus {
+  color: var(--color-accent-strong);
+  text-decoration: underline;
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Shared content container */
+.container {
+  width: 100%;
+  max-width: var(--max-content);
+  margin-inline: auto;
+  padding-inline: var(--space-5);
+}
+
+/* --------------------------------------------------------------------------
+   Sticky header + desktop nav (D-05): wordmark left, links inline right
+   -------------------------------------------------------------------------- */
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background-color: var(--color-surface);
+  box-shadow: var(--shadow-header);
+}
+
+.site-header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  min-height: var(--header-height);
+  padding-block: var(--space-2);
+}
+
+.wordmark {
+  font-family: var(--font-display);
+  font-size: var(--text-xl);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: var(--color-text);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.wordmark:hover,
+.wordmark:focus {
+  color: var(--color-accent);
+  text-decoration: none;
+}
+
+.wordmark__accent {
+  color: var(--color-accent);
+}
+
+/* Hamburger toggle button — hidden on desktop, shown on mobile (Task 3) */
+.nav-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  padding: 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.nav-toggle:hover {
+  border-color: var(--color-accent);
+}
+
+.nav-toggle__bars,
+.nav-toggle__bars::before,
+.nav-toggle__bars::after {
+  display: block;
+  width: 1.25rem;
+  height: 2px;
+  background-color: currentColor;
+  content: "";
+}
+
+.nav-toggle__bars {
+  position: relative;
+}
+
+.nav-toggle__bars::before {
+  position: absolute;
+  top: -6px;
+}
+
+.nav-toggle__bars::after {
+  position: absolute;
+  top: 6px;
+}
+
+/* Nav menu — inline list on desktop */
+.nav-menu {
+  display: flex;
+  align-items: center;
+  gap: var(--space-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.nav-menu__link {
+  display: inline-block;
+  padding: var(--space-2) var(--space-1);
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--color-text);
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+}
+
+.nav-menu__link:hover,
+.nav-menu__link:focus {
+  color: var(--color-accent);
+  text-decoration: none;
+  border-bottom-color: var(--color-border);
+}
+
+/* Active-page indication (D-08) — driven by aria-current + .is-active */
+.nav-menu__link.is-active,
+.nav-menu__link[aria-current="page"] {
+  color: var(--color-accent);
+  border-bottom-color: var(--color-accent);
+}
+
+/* --------------------------------------------------------------------------
+   Main content
+   -------------------------------------------------------------------------- */
+.site-main {
+  flex: 1 0 auto;
+  padding-block: var(--space-8);
+}
+
+.page-intro {
+  margin-bottom: var(--space-6);
+}
+
+.placeholder {
+  padding: var(--space-6);
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius);
+  background-color: var(--color-surface-2);
+  color: var(--color-muted);
+}
+
+.placeholder__label {
+  display: inline-block;
+  margin-bottom: var(--space-2);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-accent);
+}
+
+/* --------------------------------------------------------------------------
+   Footer scaffold (D-12 / D-13) — wordmark + copyright + placeholder slots.
+   NO real address / phone / hours here in Phase 1.
+   -------------------------------------------------------------------------- */
+.site-footer {
+  flex-shrink: 0;
+  margin-top: var(--space-8);
+  padding-block: var(--space-6);
+  background-color: var(--color-surface-2);
+  border-top: 1px solid var(--color-border);
+  color: var(--color-muted);
+  font-size: var(--text-sm);
+}
+
+.site-footer__inner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-5);
+  justify-content: space-between;
+}
+
+.site-footer__wordmark {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--color-text);
+}
+
+.site-footer__slots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-5);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.site-footer__slot {
+  min-width: 8rem;
+}
+
+.site-footer__copyright {
+  width: 100%;
+  margin: 0;
+  padding-top: var(--space-4);
+  border-top: 1px solid var(--color-border);
+}
