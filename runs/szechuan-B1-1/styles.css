@@ -327,3 +327,61 @@ img {
   padding-top: var(--space-4);
   border-top: 1px solid var(--color-border);
 }
+
+/* --------------------------------------------------------------------------
+   Responsive states (SITE-02) — mobile hamburger vs. desktop inline nav.
+   Breakpoint: 720px. Below it the nav collapses; above it links are inline.
+
+   Progressive enhancement (D-06): the collapsed/hidden state depends on the
+   `.js-nav` class that nav.js adds to <body> only when JS runs. With JS
+   DISABLED, `.js-nav` is never set, so at mobile width the links stay visible
+   (stacked) and remain fully reachable — navigation never requires JS.
+   -------------------------------------------------------------------------- */
+@media (max-width: 720px) {
+  .site-header__inner {
+    flex-wrap: wrap;
+  }
+
+  /* No-JS baseline at mobile width: menu is a visible, stacked list;
+     the toggle button stays hidden (it would do nothing without JS). */
+  .nav-menu {
+    flex-basis: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0;
+    margin-top: var(--space-2);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .nav-menu__link {
+    display: block;
+    width: 100%;
+    padding: var(--space-3) var(--space-1);
+    border-bottom: 2px solid transparent;
+  }
+
+  /* JS enabled: reveal the hamburger and collapse the menu by default,
+     opening only when nav.js sets .is-open (paired with aria-expanded). */
+  .js-nav .nav-toggle {
+    display: inline-flex;
+  }
+
+  .js-nav .nav-menu {
+    display: none;
+  }
+
+  .js-nav .nav-menu.is-open {
+    display: flex;
+  }
+}
+
+/* Desktop: ensure the toggle never shows and links stay inline. */
+@media (min-width: 721px) {
+  .nav-toggle {
+    display: none;
+  }
+
+  .nav-menu {
+    display: flex;
+  }
+}
