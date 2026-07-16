@@ -28,7 +28,7 @@ MENU="menu.html"
 
 # Single source-of-truth hours string (working default: unspaced en-dashes,
 # middle dot U+00B7). Task 4 updates THIS line if the live source differs.
-HOURS="Mon Closed · Tue–Sun 11:30 AM–9:00 PM"
+HOURS="Mon Closed · Tue – Sun 11:30 AM – 9:00 PM"
 
 fail() {
   echo "FAIL: $1" >&2
