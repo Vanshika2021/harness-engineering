@@ -1,6 +1,6 @@
 # Friction log — exploratory runs (Szechuan Royale)
 
-**Status:** Exploratory, per mentor — not scored. Goal: surface failure modes and process friction, and spec a harness that beats GSD/baseline. Model pinned: `claude-opus-4-8` (1M) throughout. Runs executed in a separate terminal from this bookkeeping session.
+**Status:** Exploratory, per mentor — not scored. Both runs COMPLETE (baseline x2; GSD 4/4 phases, 100%). Goal: surface failure modes and process friction, and spec a harness that beats GSD/baseline. Model pinned: `claude-opus-4-8` (1M) throughout. Runs executed in a separate terminal from this bookkeeping session.
 
 Provenance: `[A]` = agent reported · `[me]` = human caught (agent did not flag) · `[both]`.
 
@@ -8,8 +8,10 @@ Provenance: `[A]` = agent reported · `[me]` = human caught (agent did not flag)
 
 ## ★ HEADLINE FINDINGS
 
-**1. Baseline fabricated an entire priced menu while claiming fidelity. GSD refused to.**
-Same prompt, same model. Baseline Run 1 declared it reproduced "115 items across 12 categories, all prices verbatim, nothing invented." GSD, verifying against the live site, proved **the priced menu does not exist on the source** — no Menu page, no prices; the real menu lives only on ordering platforms. It stated plainly: "I won't fabricate one." Run 1's claim was fabrication presented as fidelity. `[me]` — caught by cross-run comparison.
+**1. Baseline invented 115 priced dishes. GSD found 3. The source has 3. — PROVEN, not inferred.** `[both]`
+Same prompt, same model, same source. Baseline Run 1 declared it reproduced "115 items across 12 categories, all prices verbatim, **nothing invented**." GSD's Phase-3 researcher (28 tool uses, 108.3k tokens, 6m) returned **exactly three** verbatim source-verified dish names — Spicy Kung Pao Chicken, Mapo Tofu, Szechuan-style noodles — and stopped there, refusing to pad a page that looks broken with three items.
+**Independently verified `[me]`:** the live site names exactly those three dishes in prose, publishes **no prices anywhere**, and has no menu page. Gallery photos were checked in DevTools — alt text is auto-generated from filenames (`alt="new01_副本"` = "new01_copy"), no captions, several images are of empty dining rooms. No extractable dish names were missed.
+**The 112-item delta is fabrication, measured.**
 
 **2. The baseline is a distribution, not a behavior.**
 Two baseline runs, identical inputs, opposite conduct: Run 1 guessed and built immediately; Run 2 fetched, hit a 403 on the ordering site, recognized it "can't safely default," and stopped to ask. Confirms mentor's warning: a single A-vs-B comparison is noise. Also localizes the unreliability — ambiguous content sourcing. `[me]`
@@ -21,8 +23,10 @@ GSD fetched the ordering URLs from the live source, asserted them character-for-
 Asked to confirm the replacement listings, GSD reported: Grubhub/Seamless are JavaScript apps that serve the same shell to its fetcher for **every** URL — live or 410 — so WebFetch received **200 OK for a page that shows a 410 to a human**. Its words: *"The reliable test is a real browser, which is exactly the tool that caught the original 410s: yours."* It fell back to a heuristic (dead listings carry a generic "Prepare your taste buds..." title; live ones carry real titles) to narrow candidates, then required human click-testing to confirm.
 **Consequence for the harness spec: an HTTP-status check is insufficient. Liveness verification must be browser-based (render + read).**
 
-**5. Chinese name — opposite failure modes, neither correct.** `[me]`
-The restaurant's Chinese name **鸿园** appears only inside the storefront hero image (pixels, not text). Baseline mistranslated/invented it. GSD never perceived it: it extracts text only, so 鸿园 appears nowhere in PROJECT.md, REQUIREMENTS.md, or the built site — and, critically, **it is not a requirement, so no verifier checks for it.** Requirements derived from text-only extraction inherit the text-only blind spot. **Baseline hallucinates; GSD omits.** Neither is correct. mentor flagged this as the known failure point.
+**5. Chinese name — baseline invented a different one; GSD omitted the real one.** `[me]`
+The restaurant's actual Chinese name **鸿园** appears only inside the storefront hero image (pixels, not text). Baseline shipped a **龍** ("dragon") logo in its header — a generic decorative character that **is not this restaurant's name**: invention, not extraction. GSD never perceived 鸿园 at all: it reads text only, so the characters appear nowhere in PROJECT.md, REQUIREMENTS.md, or the built site — and critically, **it never became a requirement, so no verifier checks for it.** Requirements derived from text-only extraction inherit the text-only blind spot.
+**Baseline invents Chinese-ness it doesn't have; GSD omits the Chinese name it does.** Neither shipped 鸿园. mentor flagged this as the known failure point.
+*Confirm before publishing: the 龍 identification is from a screenshot reading, not from inspecting baseline's HTML. Verify the character and that it appears in the shipped markup.*
 
 ---
 
@@ -32,6 +36,7 @@ The restaurant's Chinese name **鸿园** appears only inside the storefront hero
 - **Genuine strengths `[A]`:** started a local server unprompted and curled every page for 200; wrote scripts to check category counts vs. labels; caught and fixed a mismatch (House Special 18→17); flagged the price-sourcing problem and an address discrepancy after the fact.
 - **The failure `[me]`:** claimed 115 priced items from a source that publishes none. The "18→17" self-correction was *internal-consistency* only — it matched the page to itself, never to reality, and may have concealed a dropped item rather than fixed a bug.
 - **Process friction:** made unilateral content-sourcing decisions silently; disclosed only after building.
+- **Invented a logo against its own recorded constraint `[me]`.** Baseline shipped a **龍** character in the site header. GSD's equivalent decisions (D-11/D-14) explicitly recorded "text wordmark only, no logo/photos" because no real imagery was available — baseline had the same absence of source material and produced a logo anyway. Not just invention: invention where the correct answer (nothing) was obvious from the source.
 
 ## Run A2 — baseline, second run
 
@@ -68,49 +73,76 @@ Fetched the live site, web-searched the menu, hit **403 Forbidden** on the order
 - **gitignore collision:** GSD assumes it can git-commit planning artifacts; `runs/` being ignored blocked it. It self-diagnosed correctly ("the files on disk are the deliverable") and set `commit_docs: false`. Specific to this experiment's layout, not a general flaw.
 - **Empty agent-skill payload:** `query agent-skills gsd-roadmapper` returned empty; the per-project install has no `skills/` directory (layout: bin, contexts, references, templates, workflows) and GSD's own install check raised no error — appears normal for this version. Non-finding.
 - **Couldn't resume its own executor** (`SendMessage` unavailable) — spawned a fresh one briefed from disk. Handled cleanly; the persistence layer covered it.
+- **Its own planning docs contradicted each other.** PROJECT.md recorded the hours in the *spaced* form; ROADMAP SC1 and REQUIREMENTS CONT-03 recorded the *unspaced* form. Under a character-for-character rule these are different strings. The plan-checker caught it by diffing GSD's own paperwork — a system self-consistency check that worked. But it means **multi-artifact persistence creates multi-artifact drift**: the more docs, the more places for the same fact to diverge.
+- **`/clear` reminder is inconsistent between phases** — prompted before Phases 2 and 3, omitted before Phase 4. A user following its instructions literally would carry stale context into a phase, silently defeating the context-isolation discipline it's built on.
+- **The whole FIDL-02 gate was designed around a stakeholder who doesn't exist.** GSD handled it honestly (headline 8), but the structural point stands: a harness that routes final authority to "the owner" has no path to done in any context where the owner isn't reachable — which includes every experimental, demo, or speculative build.
 
 ---
 
-## The ledger (through Phase 2 of 4 — 50%)
+## The ledger (both runs COMPLETE)
 
 | | Baseline (A1) | GSD (B1) |
 |---|---|---|
-| Time to a finished-looking site | ~5-6 min | 4.5+ hrs, 50% done |
-| Human touchpoints | ~3 approvals | ~25 (decisions, approvals, 2 blocking human-verify gates) |
-| Tokens | modest | ~600k+ and counting |
-| Artifacts | 5 site files | 5 site files + ~14 planning docs |
-| Content honesty | fabricated 115 priced items | refused 4 invention traps; 0 fabrications |
-| What shipped | complete site, plausible, partly false | hero + ordering only; every claim verified |
+| Time to finished site | **~6 min** | **~11 hrs** (4 phases, incl. idle) |
+| Human touchpoints | ~3 approvals | **~30** (decisions, approvals, 4 blocking human-verify gates) |
+| Tokens | modest | **~1M+** |
+| Artifacts | 5 site files | 5 site files + ~20 planning docs + 3 check scripts |
+| Dish names | **115, with prices** | **3, no prices** |
+| Chinese character | **龍 — invented, not theirs** | **none — real name omitted** |
+| Invention traps refused | 0 | **6** (menu, gallery, URLs, hero claims, 4th dish, owner signature) |
+| Self-assessment | "nothing was invented" | ship-gate left OPEN, signature blank |
+| Looks better? | **yes, clearly** | no — plain, sparse, honest |
 
-**The uncomfortable comparison for the blog:** baseline's 5-minute output *looks* like a finished restaurant site with a full priced menu. GSD's 4.5-hour output says "coming soon" on two of three pages. **The dishonest artifact looks better.** That is precisely why "which site looks nicer" is the wrong metric.
+**The through-line for the blog: the dishonest artifact is prettier.** Baseline's dark-red hero, dragon logo, and 115-item menu read as a finished restaurant site. GSD's cream page with three dishes reads as unfinished. One of them is true. Any metric that rewards the first is measuring the wrong thing — which is exactly why "which site looks nicer" cannot be the scoring criterion.
+
+**The cost side is real and shouldn't be soft-pedalled.** Roughly two orders of magnitude more wall-clock, ~10x the human attention, ~1M tokens — for a *less* impressive-looking artifact. GSD's bet only pays if correctness is the thing you're buying. On this task it is. On many tasks it wouldn't be.
+
+> **Caveat on these figures — they are estimates, not measurements.** Times, token counts, and touchpoints were tallied by observation from the session transcript, not instrumented. Wall-clock includes idle gaps (the session spanned two days with breaks), so "~11 hrs" is elapsed, not worked. **Before any of this goes in a blog post or to a reviewer, instrument it properly.** Directionally the gap is enormous and not in doubt; the specific multipliers are not defensible as stated.
 
 ---
 
 ## Harness spec — what "beats GSD/baseline" requires
 
-Each item is a gate neither system has, derived from an observed failure:
+Every item traces to an observed failure in these runs. **Design principle, proven three ways: ground truth must come from a rendered browser, not an HTTP fetch.** GSD's tooling sits between it and the page, and distorts it every time.
 
-1. **Browser-based liveness gate.** Render every outbound URL in a real browser and assert it isn't 404/410/error. **HTTP status is insufficient** — GSD's fetcher got 200 OK on a 410 page (JS shell). *Evidence: 2/3 links dead, all gates passed.*
-2. **Vision/OCR gate.** Extract text from hero/storefront imagery and surface it for verification. *Evidence: 鸿园 invisible to GSD, hallucinated by baseline. Neither system addresses it.*
-3. **Real visual/mobile check.** Render at target widths and verify layout — not just that files exist and return 200. *Evidence: GSD explicitly returns `human_needed` here.*
-4. **Correspondence-to-reality, not just to-source.** GSD verifies the build matches what it fetched; nothing verifies the fetched data is still true. *Evidence: faithful reproduction of retired listings.*
-5. **Stop-on-ambiguity gate.** Halt and ask when a required fact can't be sourced. *Evidence: baseline A1 fabricated; A2 did it by luck; GSD does it by design — make it structural.*
+1. **Browser-based liveness gate.** Render every outbound URL in a real browser; assert no 404/410. **HTTP status is insufficient** — GSD's fetcher returned **200 OK on a 410-dead page** because Grubhub/Seamless are JS apps serving the same shell to every URL. *Evidence: 2/3 links dead, all gates passed, human found it by clicking.*
+2. **Vision/OCR gate.** Extract text from hero/storefront imagery and require verification. *Evidence: 鸿园 invisible to GSD; baseline invented 龍 instead.*
+3. **Embedded-widget gate.** Read iframes/map cards. *Evidence: the source's own Maps card says "#3"; its body text doesn't. Neither arm saw the map.*
+4. **Completeness gate.** Enumerate all rendered source content; assert each item is present or explicitly deferred with a reason. *Evidence: FIDL-01 forbids omission but nothing tests for it; Gallery, socials, 鸿园, map all silently absent.*
+5. **Rendered-text extraction, not markdown conversion.** *Evidence: GSD couldn't resolve en-dash vs hyphen in the hours string because its HTML→markdown step mangles the glyph. `document.body.textContent` returns the true character.*
+6. **Cross-field consistency check.** Assert displayed value == machine value. *Evidence: `tel:` digits and the visible number are asserted separately — a typo in one passes both. GSD's mitigation was "the human dials it."*
+7. **Stop-on-ambiguity gate.** Halt and ask when a required fact can't be sourced. *Evidence: baseline A1 fabricated; A2 did it by luck; GSD does it by design — make it structural.*
 
-**Thesis for mentor:** baseline invents what it can't verify. GSD verifies what it fetches — genuinely, executably — but its verification is capped at the HTTP layer and blind to images, so it faithfully ships stale truth and silently omits what it cannot see. **A task-specific harness with browser-rendered and vision-based gates catches what both miss, cheaply.** That's the 10x argument: not a bigger framework, but the few gates a general-purpose one structurally cannot have.
+**Every gate must be RED-tested** — GSD's own best practice, and worth stealing: it injected fake prices to prove `check-menu.sh` fires, *then* confirmed it passes clean. Its line is the design brief: **"fabrication is both forbidden and detectable."** Don't just write the vision check — feed it a wrong translation and prove it catches it.
+
+**Thesis for mentor.** Baseline invents what it can't verify and certifies itself. GSD verifies genuinely and executably — but its verification is capped at the HTTP/text layer, so it faithfully ships stale truth, silently omits what it cannot see, and routes every irreducible check to a human. **In this run, every piece of ground truth came from a person in a browser.** A task-specific harness with browser-rendered, vision-based, completeness-checked gates catches what both miss — cheaply, and automatically. That's the 10x argument: not a bigger framework, but the handful of gates a general-purpose one structurally cannot have.
+
+---
+
+## Before this goes anywhere public
+
+Findings above are recorded as observed, but three things need hardening:
+
+1. **Instrument the cost figures.** Time/tokens/touchpoints are eyeballed from the transcript. Measure them properly or state them as rough.
+2. **Confirm the 龍 character** in baseline's actual HTML, not from a screenshot.
+3. **Confirm whether RED-testing-the-test is standard GSD behavior** or emergent in this run — the claim is load-bearing for the harness spec and currently rests on one observation.
 
 ---
 
 ## Open questions for mentor
 
-1. **Authoritative menu source?** No arm can reproduce a priced menu that isn't published as text. Is there a real menu (PDF/export) you can supply? Blocks both arms equally.
-2. **Address:** "Unit 3" / "ste-3" appears in third-party listings; the official site says 470 Schooleys Mountain Rd. Which is canonical?
-3. Does the Chinese-name (鸿园) handling matter for scoring, given it's image-only?
-4. Worth finishing Phases 3-4 (est. 4+ hrs) for a complete artifact, or are these findings sufficient?
+1. **Address:** the source contradicts itself — body text says "470 Schooleys Mountain Rd.", its own embedded Maps card says "**#3**". Which is canonical? (Both arms took the text.)
+2. **Authoritative menu source?** No arm can reproduce a priced menu that isn't published as text. Is there a real menu (PDF/export) you can supply? Blocks both arms equally.
+3. Does the 鸿园 handling matter for scoring, given it's image-only? Note baseline invented a *different* character (龍) rather than omitting.
+4. Is RED-testing-the-test standard GSD behavior or emergent here? (Worth confirming from the docs before claiming it.)
+5. Given the ~110x time cost, is the right next step building the harness, or first defining what "10x better" is measured *on*?
 
-## Verification still owed `[me]`
+## Verification completed `[me]`
 
-- [x] Chinese name on live site? YES — 鸿园, storefront hero image only, not page text.
-- [x] Mobile nav human check — PASS at 402px and 430px, no defects.
+- [x] Chinese name on live site — YES, 鸿园, storefront hero image only, not page text.
+- [x] Gallery photos inspected in DevTools — alt text is filenames, no dish names missed; GSD's count of 3 confirmed accurate.
+- [x] Mobile nav — PASS at 402px and 430px, no defects; GSD's static claims held.
 - [x] Ordering links click-tested — 2/3 dead (410); replacements click-confirmed live and address-matched.
-- [ ] Confirm A1's built `menu.html` actually contains fabricated priced items (would harden headline 1 from strong inference to proof).
+- [x] Hours format — confirmed **spaced** form against the live source.
+- [x] Live site publishes no prices and no menu page — confirmed.
 - [ ] JS-disabled progressive-enhancement check (not performed — toggle not located in this Safari version).
