@@ -107,6 +107,16 @@ If rejected, specify the preferred tagline: ______________________________
 
 ## 4. Owner sign-off
 
+> **Reviewer note (2026-07-16, FIDL-02).** The content above was reviewed and
+> verified character-for-character against the live source
+> (szechuanroyalechinese.com) during this session, and the drift-guard in
+> `scripts/check-contact.sh` confirms the artifact's canonical values match the
+> shipped site. This artifact is **approved as READY for the owner to sign.** It
+> is deliberately left unsigned below: the real restaurant owner must complete
+> the sign-off block in person. Until the owner physically signs, the STATE.md
+> blocker "owner final confirmation pending" remains OPEN and the site is not
+> shippable. This note does not constitute the owner's approval.
+
 By completing this block you confirm that every value in Section 1 is exact, that
 the click-to-call and directions in Section 2 work, and that you have made a
 decision on both exceptions in Section 3. **Until this block is completed, the
