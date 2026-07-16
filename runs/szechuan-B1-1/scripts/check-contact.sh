@@ -25,6 +25,7 @@ set -euo pipefail
 CONTACT="contact.html"
 INDEX="index.html"
 MENU="menu.html"
+SIGNOFF="docs/OWNER-SIGNOFF.md"
 
 # Single source-of-truth hours string (working default: unspaced en-dashes,
 # middle dot U+00B7). Task 4 updates THIS line if the live source differs.
@@ -99,4 +100,19 @@ diff <(hdr "$CONTACT") <(hdr "$MENU") >/dev/null \
 grep -Fq 'target="_blank" rel="noopener noreferrer"' "$CONTACT" \
   || fail "(h) external-link safety attribute missing from $CONTACT (map/directions anchor)"
 
-echo "PASS: all assertions passed — verbatim address/phone/hours on contact.html, tel: + google.com/maps anchors, all three footers filled (no 'coming soon'), footer chrome byte-identical across the three pages, external-link guard present."
+# --- (i) FIDL-02 owner sign-off drift-guard: the sign-off artifact must carry
+#         the SAME canonical values the site ships, so the review document can
+#         never certify a value the site does not actually show. The HOURS
+#         literal is asserted via the single shared HOURS variable above (one
+#         source of truth across page, footers, and this artifact).
+[ -f "$SIGNOFF" ] || fail "(i) FIDL-02 owner sign-off artifact missing: $SIGNOFF"
+grep -Fq '470 Schooleys Mountain Rd., Hackettstown, NJ 07840' "$SIGNOFF" \
+  || fail "(i) FIDL-02 verbatim address drifted/absent in $SIGNOFF"
+grep -Fq '908-850-4558 / 908-850-6062' "$SIGNOFF" \
+  || fail "(i) FIDL-02 verbatim combined phone (space-slash-space) drifted/absent in $SIGNOFF"
+grep -Fq "$HOURS" "$SIGNOFF" \
+  || fail "(i) FIDL-02 canonical hours string drifted/absent in $SIGNOFF"
+grep -Fq '6858288' "$SIGNOFF" \
+  || fail "(i) FIDL-02 current live ordering listing token drifted/absent in $SIGNOFF"
+
+echo "PASS: all assertions passed — verbatim address/phone/hours on contact.html, tel: + google.com/maps anchors, all three footers filled (no 'coming soon'), footer chrome byte-identical across the three pages, external-link guard present, and the owner sign-off artifact ($SIGNOFF) is present and consistent with the shipped canonical values."
