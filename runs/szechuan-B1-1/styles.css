@@ -528,3 +528,37 @@ img {
 .menu-note {
   color: var(--color-muted);                  /* muted framing line under the H1 */
 }
+
+/* --------------------------------------------------------------------------
+   Phase 4 — Contact details list. Token-only. Dark values on the cream
+   surface (~15.4:1 AA PASS); muted labels (~7.4:1 AA PASS). Reuses the
+   .u-visually-hidden utility and existing spacing/type/color tokens; no new
+   hex/px literals. tel: and map anchors are plain <a> (work with JS off).
+   -------------------------------------------------------------------------- */
+.contact-details {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.contact-details__row {
+  padding: var(--space-3) var(--space-4);
+  background-color: var(--color-surface-2);   /* warm neutral panel */
+  border-left: 3px solid var(--color-accent); /* red accent bar (emphasis, not a large fill) */
+  border-radius: var(--radius);
+}
+.contact-details__label {
+  margin: 0 0 var(--space-1);
+  font-size: var(--text-sm);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-muted);                  /* muted label ~7.4:1 AA PASS */
+}
+.contact-details__value {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  color: var(--color-text);                   /* dark-on-panel ~13.9:1 AA PASS */
+}
